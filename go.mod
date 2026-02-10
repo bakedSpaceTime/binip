@@ -6,6 +6,7 @@ require (
 	github.com/alecthomas/kong v1.14.0
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/davecgh/go-spew v1.1.1
+	go.etcd.io/bbolt v1.4.3
 )
 
 require (

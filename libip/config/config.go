@@ -4,7 +4,10 @@ import (
 	"io"
 )
 
+var defaultDb = "binip.db"
+
 type Config struct {
+	DbFile      string
 	DebugFile   string
 	DebugWriter io.Writer
 	Debug       bool
@@ -12,6 +15,7 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		Debug: false,
+		DbFile: defaultDb,
+		Debug:  false,
 	}
 }

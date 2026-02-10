@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/bakedSpaceTime/binip/libip/config"
+	"github.com/bakedSpaceTime/binip/libip/db"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/davecgh/go-spew/spew"
 )
@@ -44,13 +45,19 @@ func App(c *config.Config) error {
 		defer dump.Close()
 	}
 	c.DebugWriter = dump
-	// p := tea.NewProgram(app.New(c), tea.WithAltScreen())
-	// if _, err = p.Run(); err != nil {
-	// 	fmt.Println("could not start program:", err)
-	// }
+
+	db := db.New(c)
+	defer db.Close()
+
+	fmt.Println(db)
+
 	return err
 }
 
 func Test(c *config.Config) error {
 	return nil
+}
+
+func Reset(c *config.Config) error {
+	return db.New(c).Reset()
 }

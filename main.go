@@ -27,12 +27,19 @@ func (t *Test) Run(c *config.Config) error {
 	return libip.Test(c)
 }
 
+type Reset struct {
+}
+
+func (r *Reset) Run(c *config.Config) error {
+	return libip.Reset(c)
+}
+
 var cli struct {
-	App  AppCmd `cmd:"" default:"withargs" help:"Main App."`
-	Info Info   `cmd:"" help:"Show system info"`
-	Test Test   `cmd:"" help:"Run in test mode"`
-	//  add watch command
-	Debug bool `help:"Enable debug mode."`
+	App   AppCmd `cmd:"" default:"withargs" help:"Main App."`
+	Info  Info   `cmd:"" help:"Show system info"`
+	Test  Test   `cmd:"" help:"Run in test mode"`
+	Reset Reset  `cmd:"" help:"Reset app db"`
+	Debug bool   `help:"Enable debug mode."`
 }
 
 func main() {
