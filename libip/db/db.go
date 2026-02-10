@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/bakedSpaceTime/binip/libip/config"
+	"github.com/bakedSpaceTime/binip/libip/styles"
+	"github.com/charmbracelet/lipgloss"
 	bolt "go.etcd.io/bbolt"
 )
 
@@ -55,21 +57,31 @@ func (db *Db) Reset() error {
 }
 
 func (db *Db) String() string {
-	bs := make(map[string][]string)
+	bs := make(map[string][][]string)
 
 	db.Db.View(
 		func(tx *bolt.Tx) error {
 			tx.ForEach(
 				func(name []byte, b *bolt.Bucket) error {
 					ns := string(name)
-					bs[ns] = []string{}
+					bs[ns] = [][]string{}
 					b.ForEach(func(k []byte, v []byte) error {
-						bs[ns] = append(bs[ns], fmt.Sprintf("(%s: %s)", k, v))
+						bs[ns] = append(bs[ns], []string{string(k), string(v)})
 						return nil
 					})
 					return nil
 				})
 			return nil
 		})
-	return fmt.Sprintf("%v", bs)
+
+	var components []string
+	for k, v := range bs {
+		t := styles.StyledTable()
+		t.Rows(v...)
+		components = append(components, styles.HeaderStyle.Render((fmt.Sprintf("bucket: %s", k))))
+		components = append(components, t.Render())
+
+	}
+
+	return lipgloss.JoinVertical(lipgloss.Top, components...)
 }
