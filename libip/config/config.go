@@ -5,6 +5,7 @@ import (
 )
 
 var defaultDb = "binip.db"
+var defaultDebugFile = "debug.log"
 
 type Config struct {
 	DbFile      string
@@ -15,7 +16,8 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		DbFile: defaultDb,
-		Debug:  false,
+		DbFile:    defaultDb,
+		DebugFile: defaultDebugFile,
+		Debug:     false,
 	}
 }
