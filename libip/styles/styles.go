@@ -12,9 +12,11 @@ var (
 
 	tableHeaderStyle = lipgloss.NewStyle().Foreground(purple).Bold(true).Align(lipgloss.Center)
 	HeaderStyle      = lipgloss.NewStyle().Background(purple).Bold(true).Align(lipgloss.Left)
-	cellStyle        = lipgloss.NewStyle().Padding(0, 1).Width(14)
-	oddRowStyle      = cellStyle.Foreground(gray)
-	evenRowStyle     = cellStyle.Foreground(lightGray)
+	FooterStyle      = lipgloss.NewStyle().
+				Align(lipgloss.Center, lipgloss.Bottom)
+	cellStyle    = lipgloss.NewStyle().Padding(0, 1)
+	oddRowStyle  = cellStyle.Foreground(gray)
+	evenRowStyle = cellStyle.Foreground(lightGray)
 )
 
 func StyledTable() *table.Table {

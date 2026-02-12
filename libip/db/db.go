@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"net/netip"
 
 	"github.com/bakedSpaceTime/binip/libip/config"
 	"github.com/bakedSpaceTime/binip/libip/styles"
@@ -84,4 +85,37 @@ func (db *Db) String() string {
 	}
 
 	return lipgloss.JoinVertical(lipgloss.Top, components...)
+}
+
+func (db *Db) SetNetwork(prefix string) error {
+	return db.Db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(systemBucket))
+		err := b.Put([]byte("network_prefix"), []byte(prefix))
+		return err
+	})
+}
+
+func (db *Db) GetNetwork() (string, error) {
+	var prefix string
+	err := db.Db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(systemBucket))
+		v := b.Get([]byte("network_prefix"))
+		if v != nil {
+			prefix = string(v)
+		}
+		return nil
+	})
+	return prefix, err
+}
+
+// GetNetworkPrefix returns the network prefix as a netip.Prefix struct
+func (db *Db) GetNetworkPrefix() (netip.Prefix, error) {
+	prefixStr, err := db.GetNetwork()
+	if err != nil {
+		return netip.Prefix{}, err
+	}
+	if prefixStr == "" {
+		return netip.Prefix{}, fmt.Errorf("no network prefix configured")
+	}
+	return netip.ParsePrefix(prefixStr)
 }
