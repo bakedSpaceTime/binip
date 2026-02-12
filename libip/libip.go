@@ -30,6 +30,8 @@ func Info(c *config.Config) error {
 			fmt.Println()
 		}
 	}
+	fmt.Println()
+	fmt.Println(db.New(c).String())
 	return nil
 }
 
