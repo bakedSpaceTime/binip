@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"net/netip"
 
 	"github.com/bakedSpaceTime/binip/libip/config"
 	"github.com/bakedSpaceTime/binip/libip/db"
@@ -183,7 +184,7 @@ func (m *mainModel) handleOnboardingFormCompletion() tea.Cmd {
 		return func() tea.Msg {
 			return prefixConfirmedMsg{
 				confirmed: m.formConfirmed,
-				prefix:    m.prefixBeingConfirmed,
+				prefix:    netip.MustParsePrefix(m.prefixBeingConfirmed).Masked().String(),
 			}
 		}
 	}

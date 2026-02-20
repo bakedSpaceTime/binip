@@ -22,7 +22,7 @@ func (m *mainModel) prefixSelectForm() *huh.Form {
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("Select IP Range").
+				Title("Select Network Prefix").
 				Options(options...).
 				Value(&m.formPrefix), // Bind to temporary form field
 		),
@@ -31,10 +31,11 @@ func (m *mainModel) prefixSelectForm() *huh.Form {
 
 // customPrefixForm allows user to enter a custom prefix
 func (m *mainModel) customPrefixForm() *huh.Form {
+	m.formPrefix = "" // Clear previous value
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
-				Title("Enter custom network prefix").
+				Title("Enter Custom Network Prefix").
 				Placeholder("e.g., 192.168.1.0/24").
 				Description("Must be in CIDR notation").
 				Value(&m.formPrefix). // Bind to temporary form field
@@ -52,11 +53,10 @@ func (m *mainModel) customPrefixForm() *huh.Form {
 func (m *mainModel) confirmPrefixForm(prefix string) *huh.Form {
 	t := styles.BorderlessTable()
 	t.Rows(
-		[]string{"Prefix Entered", prefix},
-		[]string{"CIDR Block", netip.MustParsePrefix(prefix).Masked().String()},
+		[]string{"Prefix you Entered", prefix},
 	)
 	fc := styles.AccentStyle.Render(">")
-	fp := styles.InfoStyle.Render(prefix)
+	fp := styles.InfoStyle.Render(netip.MustParsePrefix(prefix).Masked().String())
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewConfirm().
