@@ -19,5 +19,56 @@ func (m *mainModel) footerView() string {
 }
 
 func (m *mainModel) onboardingView() string {
-	return m.form.View()
+	body := m.form.View()
+
+	// Show error or status message if present
+	if m.msg != "" {
+		body = body + "\n\n" + styles.ErrorStyle.Render(m.msg)
+	}
+
+	return body
+}
+
+func (m *mainModel) operationalView() string {
+	switch m.operationalMode {
+	case listView:
+		return m.listView()
+	case detailView:
+		return m.detailView()
+	case createView, editView, deleteConfirmView:
+		// Form-based views
+		body := m.form.View()
+		if m.msg != "" {
+			body = body + "\n\n" + styles.StatusStyle.Render(m.msg)
+		}
+		return body
+	default:
+		// Fallback
+		return m.db.String()
+	}
+}
+
+// listView shows the list of records
+func (m *mainModel) listView() string {
+	// TODO: Implement when CRUD UI is designed
+	// For now, show the database info as before
+	body := m.db.String()
+
+	if m.msg != "" {
+		body = body + "\n\n" + styles.StatusStyle.Render(m.msg)
+	}
+
+	return body
+}
+
+// detailView shows details of a single record
+func (m *mainModel) detailView() string {
+	// TODO: Implement when CRUD UI is designed
+	body := "Detail view for record: " + m.currentRecordID
+
+	if m.msg != "" {
+		body = body + "\n\n" + styles.StatusStyle.Render(m.msg)
+	}
+
+	return body
 }
