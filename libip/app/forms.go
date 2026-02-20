@@ -5,6 +5,7 @@ import (
 	"net/netip"
 
 	"github.com/bakedSpaceTime/binip/libip/record"
+	"github.com/bakedSpaceTime/binip/libip/styles"
 	"github.com/charmbracelet/huh"
 )
 
@@ -49,10 +50,17 @@ func (m *mainModel) customPrefixForm() *huh.Form {
 
 // confirmPrefixForm shows confirmation for the selected prefix
 func (m *mainModel) confirmPrefixForm(prefix string) *huh.Form {
+	t := styles.BorderlessTable()
+	t.Rows(
+		[]string{"Prefix Entered", prefix},
+		[]string{"CIDR Block", netip.MustParsePrefix(prefix).Masked().String()},
+	)
+	fc := styles.AccentStyle.Render(">")
+	fp := styles.InfoStyle.Render(prefix)
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewConfirm().
-				Title(fmt.Sprintf("Use this network prefix?\n\n  %s", prefix)).
+				Title(fmt.Sprintf("Use this CIDR Block?\n %s %s\n\n%s", fc, fp, t.Render())).
 				Affirmative("Yes").
 				Negative("No, choose again").
 				Value(&m.formConfirmed), // Bind to temporary form field
