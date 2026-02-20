@@ -10,9 +10,12 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
-var ipRecordsBucket = "ip_records"
-var systemBucket = "system"
-var version = "0.1.0"
+const (
+	ipRecordsBucket = "ip_records"
+	systemBucket    = "system"
+	version         = "0.1.0"
+	cidrBlockKey    = "cidr_block"
+)
 
 type Db struct {
 	Db     *bolt.DB
@@ -53,7 +56,15 @@ func (db *Db) Close() error {
 
 func (db *Db) Reset() error {
 	return db.Db.Update(func(tx *bolt.Tx) error {
-		return tx.DeleteBucket([]byte(ipRecordsBucket))
+		err := tx.DeleteBucket([]byte(ipRecordsBucket))
+		if err != nil {
+			return fmt.Errorf("delete bucket: %s", err)
+		}
+		err = tx.DeleteBucket([]byte(systemBucket))
+		if err != nil {
+			return fmt.Errorf("delete bucket: %s", err)
+		}
+		return nil
 	})
 }
 
@@ -90,7 +101,7 @@ func (db *Db) String() string {
 func (db *Db) SetNetwork(prefix string) error {
 	return db.Db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(systemBucket))
-		err := b.Put([]byte("network_prefix"), []byte(prefix))
+		err := b.Put([]byte(cidrBlockKey), []byte(prefix))
 		return err
 	})
 }
@@ -99,7 +110,7 @@ func (db *Db) GetNetwork() (string, error) {
 	var prefix string
 	err := db.Db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(systemBucket))
-		v := b.Get([]byte("network_prefix"))
+		v := b.Get([]byte(cidrBlockKey))
 		if v != nil {
 			prefix = string(v)
 		}
